@@ -5,7 +5,7 @@ subtitle: "Amazon EKS: Resiliencia, Escalabilidad y Operación Sustentable" # CO
 emoji: "✨" 
 intro: |
   Bienvenido a la **Plataforma de Laboratorios** del curso **Amazon EKS: Resiliencia, Escalabilidad y Operación Sustentable**. Aquí podrás explorar diferentes configuraciones a través de prácticas guiadas. ¡Desarrolla tus habilidades y lleva tus conocimientos al siguiente nivel!
-course_id: aws-eks-ckad-int # COLOCAR EL NOMBRE DEL CURSO, ES EL NOMBRE DEL ARCHIVO MISMO Y NOMBRE DEFINIDO EN _data/courses.yaml
+course_id: aws-eks-priv # COLOCAR EL NOMBRE DEL CURSO, ES EL NOMBRE DEL ARCHIVO MISMO Y NOMBRE DEFINIDO EN _data/courses.yaml
 permalink: / 
 thanks_note: "**¡Gracias por visitar nuestra plataforma!** No olvides revisar todos los laboratorios y comenzar tu viaje de aprendizaje hoy mismo." 
 footer_title: "¡Gracias por visitar nuestra plataforma!" 

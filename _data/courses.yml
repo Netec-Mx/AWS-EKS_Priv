@@ -1,6 +1,6 @@
 # Archivo de definición de cursos
 # _data/courses.yml
-aws-eks-ckad-int:
+aws-eks-priv:
   title: "Amazon EKS: Resiliencia, Escalabilidad y Operación Sustentable" # COLOCAR EL NOMBRE DEL CURSO
   intro: "DESCRIPCIÓN_DEL_CURSO_AQUI"
   labs:

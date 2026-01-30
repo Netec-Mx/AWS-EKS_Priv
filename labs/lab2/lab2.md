@@ -729,7 +729,7 @@ Accederás a Argo CD por port-forward, obtendrás el password inicial, subirás 
   ```
   ```bash
   git remote remove origin 2>/dev/null || true
-  git remote add origin https://github.com/jorgepas12/repogitops-19jxm.git
+  git remote add origin https://TU_REPOSITORIO_AQUÍ.git
   ```
   ```bash
   git pull origin main --allow-unrelated-histories --no-edit

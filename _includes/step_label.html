@@ -1,5 +1,5 @@
 {%- comment -%}
-Emite "Paso N." autoincremental.
+Emite "Paso N." autoincremental POR PÁGINA (no global del sitio).
 Uso típico: - {% include step_label.html %} Texto del paso…
 
 Parámetros:
@@ -17,21 +17,38 @@ Parámetros:
 {%- assign bold   = include.bold   | default: "true" -%}
 {%- assign start  = include.start_at | default: 1 | plus: 0 -%}
 {%- assign series = include.series | default: "a" -%}
+{%- assign start_minus_1 = start | minus: 1 -%}
 
 {%- if include.step -%}
   {%- assign n = include.step | plus: 0 -%}
 {%- else -%}
+
   {%- if series == "a" -%}
-    {%- capture _i %}{% increment step_text_counter_a %}{% endcapture -%}
+    {%- assign __cnt = step_text_counter_a | default: start_minus_1 | plus: 0 -%}
+    {%- assign __cnt = __cnt | plus: 1 -%}
+    {%- assign step_text_counter_a = __cnt -%}
+    {%- assign n = __cnt -%}
+
   {%- elsif series == "b" -%}
-    {%- capture _i %}{% increment step_text_counter_b %}{% endcapture -%}
+    {%- assign __cnt = step_text_counter_b | default: start_minus_1 | plus: 0 -%}
+    {%- assign __cnt = __cnt | plus: 1 -%}
+    {%- assign step_text_counter_b = __cnt -%}
+    {%- assign n = __cnt -%}
+
   {%- elsif series == "c" -%}
-    {%- capture _i %}{% increment step_text_counter_c %}{% endcapture -%}
+    {%- assign __cnt = step_text_counter_c | default: start_minus_1 | plus: 0 -%}
+    {%- assign __cnt = __cnt | plus: 1 -%}
+    {%- assign step_text_counter_c = __cnt -%}
+    {%- assign n = __cnt -%}
+
   {%- else -%}
-    {%- capture _i %}{% increment step_text_counter_d %}{% endcapture -%}
+    {%- assign __cnt = step_text_counter_d | default: start_minus_1 | plus: 0 -%}
+    {%- assign __cnt = __cnt | plus: 1 -%}
+    {%- assign step_text_counter_d = __cnt -%}
+    {%- assign n = __cnt -%}
   {%- endif -%}
-  {%- assign n = _i | plus: start -%}
+
 {%- endif -%}
 
 {%- capture label -%}{{ prefix }} {{ n }}{{ suffix }}{%- endcapture -%}
-{%- if bold == "true" -%}**{{ label }}**{%- else -%}{{ label }}{%- endif -%} 
+{%- if bold == "true" -%}**{{ label }}**{%- else -%}{{ label }}{%- endif -%}

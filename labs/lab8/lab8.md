@@ -1088,19 +1088,19 @@ Eliminaras los objetos creados y el cluster de Amazon EKS.
 
 #### Tarea 9.1 
 
-- {% include step_label.html %} Elimina el workload de prueba y el namespace.
-
-  ```bash
-  kubectl delete ns karpenter --ignore-not-found
-  ```
-  {% include step_image.html %}
-
 - {% include step_label.html %} (Opcional) Elimina NodePool/EC2NodeClass si NO los reutilizarás.
 
   ```bash
   kubectl delete -f manifests/ec2nodeclass-default.yaml --ignore-not-found
   kubectl delete -f manifests/nodepools-dedicated.yaml --ignore-not-found
   kubectl delete -f manifests/workloads-affinity.yaml --ignore-not-found
+  ```
+  {% include step_image.html %}
+
+- {% include step_label.html %} Elimina el workload de prueba y el namespace.
+
+  ```bash
+  kubectl delete ns karpenter --ignore-not-found
   ```
   {% include step_image.html %}
 

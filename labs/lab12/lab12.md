@@ -142,6 +142,7 @@ Crearás la carpeta del laboratorio, definirás variables reutilizables y valida
   ```bash
   aws sts get-caller-identity | tee outputs/01_aws_identity.json
   ```
+  {% include step_image.html %}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r1 %}{{ results[0] }}{% endcapture %}
@@ -230,7 +231,6 @@ Crea un clúster EKS con Managed Node Group usando `eksctl`. **Omite esta tarea*
   ```bash
   kubectl get events -A --sort-by=.lastTimestamp | tail -n 50 | tee outputs/01_events_tail.txt
   ```
-  {% include step_image.html %}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r1 %}{{ results[1] }}{% endcapture %}
@@ -270,10 +270,10 @@ Descargarás Istio (incluye `istioctl` y `samples/`), lo agregarás al PATH y lo
     curl -fsSL https://istio.io/downloadIstio | ISTIO_VERSION="$ISTIO_VERSION" sh -
   fi
   ```
+  {% include step_image.html %}
   ```bash
   ls -1 | grep -E '^istio-' | tail -n 5 | tee ../outputs/03_istio_dirs.txt
   ```
-  {% include step_image.html %}
 
 - {% include step_label.html %} Define `ISTIO_HOME` apuntando a la carpeta extraída y valida `istioctl` local.
 

@@ -404,7 +404,7 @@ Crearás una cola SQS (fuente de eventos) y configurarás un ServiceAccount con 
         "Sid": "KedaScaleSignals",
         "Effect": "Allow",
         "Action": [
-          "sqs:GetQueueAttributes",
+          "sqs:GetQueueAttributes"
         ],
         "Resource": "$QUEUE_ARN"
       },
@@ -420,7 +420,7 @@ Crearás una cola SQS (fuente de eventos) y configurarás un ServiceAccount con 
       }
     ]
   }
-  EOF
+  EOF 
   ```
 
 - {% include step_label.html %} Crea (o reutiliza) la IAM Policy y guarda su ARN.

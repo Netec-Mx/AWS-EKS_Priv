@@ -870,7 +870,24 @@ Usarás OpenCost UI, Prometheus (PromQL) y OpenCost API para obtener costos por 
     -d window=60m \
     -d aggregate="namespace,label:team" \
     -d resolution=5m \
-    | head -n 160 | tee outputs/43_allocation_by_ns_team_head.json
+  | jq -r '
+    .data[0]
+    | to_entries
+    | sort_by(-.value.totalCost)
+    | .[]
+    | .value as $v
+    | [
+        ($v.properties.namespace // "-"),
+        ($v.properties.namespaceLabels.team // $v.properties.labels.team // "-"),
+        ($v.totalCost // 0),
+        ($v.cpuCost   // 0),
+        ($v.ramCost   // 0)
+      ]
+    | @tsv
+  ' \
+  | (echo -e "namespace\tteam\ttotalCost\tcpuCost\tramCost"; cat) \
+  | column -t -s $'\t' \
+  | tee outputs/43_allocation_by_ns_team_table.txt
   ```
   {% include step_image.html %}
 

@@ -464,7 +464,7 @@ Crearás una cola SQS (fuente de eventos) y configurarás un ServiceAccount con 
   ```bash
   eksctl create iamserviceaccount \
     --cluster "$CLUSTER_NAME" --region "$AWS_REGION" \
-    --namespace "$KEDA_NS" --name "$KEDA_OPERATOR_SA" \
+    --namespace "$NS" --name "sqs-worker-sa" \
     --attach-policy-arn "$POLICY_ARN" \
     --override-existing-serviceaccounts \
     --approve | tee outputs/04_eksctl_irsa_keda_operator.txt
@@ -478,11 +478,11 @@ Crearás una cola SQS (fuente de eventos) y configurarás un ServiceAccount con 
   kubectl -n "$KEDA_NS" rollout status deploy/keda-operator --timeout=300s
   ```
   ```bash
-  kubectl -n "$KEDA_NS" get sa "$KEDA_OPERATOR_SA" -o yaml | sed -n '1,120p' | tee outputs/04_keda_operator_sa_yaml.txt
+  kubectl -n "$NS" get sa "sqs-worker-sa" -o yaml | sed -n '1,120p' | tee outputs/04_sqs_worker_sa_yaml.txt
   ```
   {% include step_image.html %}
 
-#### Tarea 4.5 — Validación práctica de IRSA (pod efímero AWS CLI)
+#### Tarea 4.4 — Validación práctica de IRSA (pod efímero AWS CLI)
 
 - {% include step_label.html %} Lanza un pod efímero con la SA y consulta atributos de la cola.
 

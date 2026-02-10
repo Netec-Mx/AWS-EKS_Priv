@@ -336,7 +336,6 @@ Descargarás Istio, habilitarás `istioctl` en PATH de la sesión y validarás `
   kubectl -n istio-system wait --for=condition=Ready pod -l app=istiod --timeout=600s
   ```
   {% include step_image.html %}
-  ```bash
 
 - {% include step_label.html %} Confirma CRDs y webhooks instalados (evidencia).
 

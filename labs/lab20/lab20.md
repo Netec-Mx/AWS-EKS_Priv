@@ -535,7 +535,7 @@ Verificarás (o instalarás) Metrics Server, crearás un HPA `autoscaling/v2` co
 
 - {% include step_label.html %} Verifica si ya existe metrics-server.
 
-  > **IMPORTANTE:** Si metrics-server existe, **NO** hagas la instalacion salta ese paso.
+  > **IMPORTANTE:** Si metrics-server existe, **NO** hagas la instalacion salta ese paso. `aws eks update-addon --cluster-name "$CLUSTER_NAME" --addon-name metrics-server --region "$AWS_REGION" --resolve-conflicts OVERWRITE`
   {: .lab-note .important .compact}
 
   ```bash
@@ -807,7 +807,6 @@ Instalarás kube-green y crearás un `SleepInfo` para “dormir” el namespace 
   ```bash
   kubectl -n "$NS" get events --sort-by=.lastTimestamp | tail -n 40 | tee outputs/06_events_tail.txt
   ```
-  {% include step_image.html %}
 
 {% assign results = site.data.task-results[page.slug].results %}
 {% capture r1 %}{{ results[5] }}{% endcapture %}

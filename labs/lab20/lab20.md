@@ -701,6 +701,7 @@ Instalarás kube-green y crearás un `SleepInfo` para “dormir” el namespace 
   ```
   {% include step_image.html %}
   ```bash
+  helm repo add kube-green https://kube-green.github.io/helm-charts/
   helm upgrade --install kube-green kube-green/kube-green \
     --namespace kube-green --create-namespace \
     | tee outputs/06_helm_install_kubegreen.txt

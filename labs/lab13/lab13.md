@@ -451,20 +451,24 @@ Crearás una cola SQS (fuente de eventos) y configurarás un ServiceAccount con 
   ```
   {% include step_image.html %}
 
-- {% include step_label.html %} Crea el ServiceAccount con IAM Role adjuntando la policy (IRSA).
-
-  > **NOTA:** Este proceso puede tardar 2 minutos en terminar.
-  {: .lab-note .info .compact}
+- {% include step_label.html %} Obtén el nombre real del ServiceAccount del KEDA Operator (desde el Deployment).
 
   ```bash
   export KEDA_NS="keda"
   export KEDA_OPERATOR_SA="$(kubectl -n "$KEDA_NS" get deploy keda-operator -o jsonpath='{.spec.template.spec.serviceAccountName}')"
   echo "KEDA_OPERATOR_SA=$KEDA_OPERATOR_SA" | tee outputs/04_keda_operator_sa.txt
   ```
+
+- {% include step_label.html %} Crea IRSA para el KEDA Operator (necesario para que el scaler haga GetQueueAttributes en SQS).
+
+  > **NOTA:** Este proceso puede tardar 2 minutos en terminar.
+  {: .lab-note .info .compact}
+
   ```bash
   eksctl create iamserviceaccount \
     --cluster "$CLUSTER_NAME" --region "$AWS_REGION" \
-    --namespace "$NS" --name "sqs-worker-sa" \
+    --namespace "$KEDA_NS" --name "$KEDA_OPERATOR_SA" \
+    --role-name "${CLUSTER_NAME}-keda-operator-irsa" \
     --attach-policy-arn "$POLICY_ARN" \
     --override-existing-serviceaccounts \
     --approve | tee outputs/04_eksctl_irsa_keda_operator.txt
@@ -474,9 +478,36 @@ Crearás una cola SQS (fuente de eventos) y configurarás un ServiceAccount con 
 - {% include step_label.html %} Valida que el ServiceAccount tiene la anotación `eks.amazonaws.com/role-arn`.
 
   ```bash
+  kubectl -n "$KEDA_NS" get sa "$KEDA_OPERATOR_SA" -o yaml | sed -n '1,140p' | tee outputs/04_keda_operator_sa_yaml.txt
+  ```
+  {% include step_image.html %}
+
+- {% include step_label.html %} Reinicia el KEDA Operator para que tome la anotación IRSA y valida el rollout.
+
+  ```bash
   kubectl -n "$KEDA_NS" rollout restart deploy/keda-operator
   kubectl -n "$KEDA_NS" rollout status deploy/keda-operator --timeout=300s
   ```
+  {% include step_image.html %}
+
+- {% include step_label.html %} Crea IRSA para el worker (sqs-worker-sa) en el namespace del laboratorio ($NS) adjuntando la policy (IRSA).
+
+  > **NOTA:** Este proceso puede tardar 2 minutos en terminar.
+  {: .lab-note .info .compact}
+
+  ```bash
+  eksctl create iamserviceaccount \
+    --cluster "$CLUSTER_NAME" --region "$AWS_REGION" \
+    --namespace "$NS" --name "sqs-worker-sa" \
+    --role-name "${CLUSTER_NAME}-sqs-worker-irsa" \
+    --attach-policy-arn "$POLICY_ARN" \
+    --override-existing-serviceaccounts \
+    --approve | tee outputs/04_eksctl_irsa_sqs_worker.txt
+  ```
+  {% include step_image.html %}
+
+- {% include step_label.html %} Valida que el ServiceAccount del worker tiene la anotación `eks.amazonaws.com/role-arn`.
+
   ```bash
   kubectl -n "$NS" get sa "sqs-worker-sa" -o yaml | sed -n '1,120p' | tee outputs/04_sqs_worker_sa_yaml.txt
   ```
@@ -632,7 +663,6 @@ Construirás una imagen Docker local para un worker que hace long polling en SQS
   ```bash
   docker push "$IMAGE_URI" | tee outputs/05_docker_push.txt
   ```
-  {% include step_image.html %}
 
 - {% include step_label.html %} Valida que la imagen existe en ECR.
 
@@ -765,8 +795,8 @@ Desplegarás el worker con **réplicas = 0**, crearás `TriggerAuthentication` (
     maxReplicaCount: 10
     triggers:
     - type: aws-sqs-queue
-      # authenticationRef:
-      #  name: aws-pod-identity
+      authenticationRef:
+        name: aws-pod-identity
       metadata:
         queueURL: "$QUEUE_URL"
         awsRegion: "$AWS_REGION"
@@ -810,6 +840,7 @@ Desplegarás el worker con **réplicas = 0**, crearás `TriggerAuthentication` (
   done
   echo "Sent 50 messages to $QUEUE_NAME"
   ```
+  {% include step_image.html %}
   {% include step_image.html %}
 
 - {% include step_label.html %} (Evidencia) Captura el backlog aproximado en SQS.
@@ -869,19 +900,6 @@ Desplegarás el worker con **réplicas = 0**, crearás `TriggerAuthentication` (
 
   ```bash
   kubectl -n "$NS" get deploy sqs-worker -o yaml | egrep -n "serviceAccountName|QUEUE_URL|AWS_REGION|image:" -A2 -B2 | tee outputs/06_troubleshoot_deploy_snippet.txt
-  ```
-
-- {% include step_label.html %} Valida nuevamente IRSA desde un pod efímero usando la misma SA.
-
-  ```bash
-  kubectl run awscli2 -n "$NS" \
-    --image=public.ecr.aws/aws-cli/aws-cli:latest \
-    --restart=Never -it --rm \
-    --overrides='{"apiVersion":"v1","spec":{"serviceAccountName":"sqs-worker-sa"}}' \
-    -- sqs get-queue-attributes \
-      --queue-url "$QUEUE_URL" \
-      --attribute-names ApproximateNumberOfMessages \
-      --region "$AWS_REGION"
   ```
   {% include step_image.html %}
 
